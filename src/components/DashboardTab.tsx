@@ -1,7 +1,7 @@
 "use client";
 
 import { DcfInputs, DcfResult } from "@/lib/types";
-import { formatNumber, formatPercent } from "@/lib/format";
+import { formatNumber, formatCurrency, formatPercent } from "@/lib/format";
 
 interface DashboardTabProps {
   inputs: DcfInputs;
@@ -30,9 +30,6 @@ function KpiCard({
   );
 }
 
-/**
- * SVGベースのシンプルな棒グラフ
- */
 function BarChart({
   title,
   labels,
@@ -59,7 +56,6 @@ function BarChart({
           height={chartHeight + 40}
           className="block mx-auto"
         >
-          {/* Baseline */}
           <line
             x1={0}
             y1={chartHeight}
@@ -118,33 +114,29 @@ export default function DashboardTab({ inputs, result }: DashboardTabProps) {
   const upsideColor =
     upside > 0 ? "text-green-600" : upside < 0 ? "text-red-600" : "text-gray-900";
 
-  // Sales chart: Year0〜Year5
   const salesLabels = ["Y0", "Y1", "Y2", "Y3", "Y4", "Y5"];
   const salesValues = [inputs.baseYearSales, ...yearData.map((y) => y.sales)];
 
-  // FCFF chart: Year1〜Year5
   const fcffLabels = ["Y1", "Y2", "Y3", "Y4", "Y5"];
   const fcffValues = yearData.map((y) => y.fcff);
 
   return (
     <div className="space-y-6">
-      {/* 警告 */}
       {!waccExceedsLtg && (
         <div className="bg-amber-50 border border-amber-300 text-amber-800 rounded-lg p-4 text-sm">
-          WACC ≤ LTG のため、ターミナルバリューは計算されません。WACCまたはLTGを見直してください。
+          WACC is less than or equal to LTG. Terminal Value cannot be calculated. Please review your WACC or LTG assumptions.
         </div>
       )}
 
-      {/* KPIカード */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         <KpiCard
-          label="理論株価"
-          value={`¥${formatNumber(impliedPrice)}`}
+          label="Implied Price"
+          value={formatCurrency(impliedPrice)}
           color="text-blue-700"
         />
         <KpiCard
-          label="現在株価"
-          value={`¥${formatNumber(inputs.currentStockPrice)}`}
+          label="Current Price"
+          value={formatCurrency(inputs.currentStockPrice)}
         />
         <KpiCard
           label="Upside"
@@ -153,8 +145,8 @@ export default function DashboardTab({ inputs, result }: DashboardTabProps) {
         />
         <KpiCard
           label="Enterprise Value"
-          value={formatNumber(enterpriseValue, 0)}
-          sub="百万円"
+          value={formatCurrency(enterpriseValue, 0)}
+          sub="$M"
         />
         <KpiCard
           label="TV / EV"
@@ -162,16 +154,15 @@ export default function DashboardTab({ inputs, result }: DashboardTabProps) {
         />
       </div>
 
-      {/* グラフ */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <BarChart
-          title="Sales推移（Year0〜Year5）"
+          title="Sales ($M) — Year 0 to Year 5"
           labels={salesLabels}
           values={salesValues}
           color="#3b82f6"
         />
         <BarChart
-          title="FCFF推移（Year1〜Year5）"
+          title="FCFF ($M) — Year 1 to Year 5"
           labels={fcffLabels}
           values={fcffValues}
           color="#10b981"

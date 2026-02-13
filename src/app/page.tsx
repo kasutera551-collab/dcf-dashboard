@@ -25,19 +25,18 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* ヘッダー */}
       <header className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
           <h1 className="text-xl font-bold text-gray-900">
             DCF Valuation Dashboard
           </h1>
           <p className="text-sm text-gray-500 mt-0.5">
-            DCF法（FCFF）による理論株価算出ツール
+            Intrinsic value calculator using FCFF-based DCF analysis
           </p>
         </div>
       </header>
 
-      {/* タブナビゲーション */}
+      {/* Tab Navigation */}
       <nav className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex space-x-1">
@@ -58,7 +57,7 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* コンテンツ */}
+      {/* Content */}
       <main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
         {activeTab === "dashboard" && (
           <DashboardTab inputs={inputs} result={result} />

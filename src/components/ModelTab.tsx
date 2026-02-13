@@ -63,13 +63,12 @@ export default function ModelTab({ inputs, result }: ModelTabProps) {
 
   return (
     <div className="space-y-6">
-      {/* 年次テーブル */}
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead>
             <tr className="border-b-2 border-gray-300">
               <th className="text-left py-2 px-3 font-semibold text-gray-700 bg-gray-50 min-w-[120px]">
-                項目
+                Item
               </th>
               <th className="text-right py-2 px-3 font-semibold text-gray-700 bg-gray-50">
                 Year 0
@@ -108,7 +107,8 @@ export default function ModelTab({ inputs, result }: ModelTabProps) {
         </table>
       </div>
 
-      {/* サマリー */}
+      <div className="text-xs text-gray-500">All figures in $M unless otherwise noted.</div>
+
       <div className="bg-gray-50 rounded-lg p-6 space-y-3">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           Valuation Summary
@@ -143,11 +143,11 @@ export default function ModelTab({ inputs, result }: ModelTabProps) {
             highlight
           />
           <SummaryRow
-            label="Shares Outstanding"
+            label="Shares Outstanding (M)"
             value={formatNumber(inputs.sharesOutstanding, 0)}
           />
           <SummaryRow
-            label="Implied Price"
+            label="Implied Price ($)"
             value={formatNumber(impliedPrice)}
             highlight
           />

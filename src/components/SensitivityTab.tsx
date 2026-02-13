@@ -2,7 +2,7 @@
 
 import { DcfInputs } from "@/lib/types";
 import { calculateSensitivity } from "@/lib/dcf";
-import { formatNumber, formatPercent } from "@/lib/format";
+import { formatNumber, formatCurrency, formatPercent } from "@/lib/format";
 import { useMemo } from "react";
 
 interface SensitivityTabProps {
@@ -14,13 +14,11 @@ export default function SensitivityTab({
   inputs,
   currentImpliedPrice,
 }: SensitivityTabProps) {
-  // WACC: 8%〜14%（1%刻み）
   const waccRange = useMemo(
-    () => [0.08, 0.09, 0.1, 0.11, 0.12, 0.13, 0.14],
+    () => [0.07, 0.08, 0.09, 0.10, 0.11, 0.12, 0.13],
     []
   );
 
-  // LTG: 2%〜5%（0.5%刻み）
   const ltgRange = useMemo(
     () => [0.02, 0.025, 0.03, 0.035, 0.04, 0.045, 0.05],
     []
@@ -35,10 +33,10 @@ export default function SensitivityTab({
     <div className="space-y-4">
       <div className="flex items-center gap-4 mb-2">
         <h3 className="text-lg font-semibold text-gray-900">
-          感度分析：WACC × LTG
+          Sensitivity Analysis: WACC vs. LTG
         </h3>
         <span className="text-sm text-gray-500">
-          現在の理論株価: ¥{formatNumber(currentImpliedPrice)}
+          Current implied price: {formatCurrency(currentImpliedPrice)}
         </span>
       </div>
 
@@ -47,7 +45,7 @@ export default function SensitivityTab({
           <thead>
             <tr>
               <th className="py-2 px-3 bg-gray-100 border border-gray-300 text-xs text-gray-500">
-                LTG ＼ WACC
+                LTG \ WACC
               </th>
               {waccRange.map((w) => (
                 <th
@@ -116,19 +114,19 @@ export default function SensitivityTab({
       <div className="flex gap-6 text-xs text-gray-500 mt-2">
         <span className="flex items-center gap-1">
           <span className="inline-block w-3 h-3 bg-green-50 border border-green-200 rounded" />
-          現在株価以上
+          Above current price
         </span>
         <span className="flex items-center gap-1">
           <span className="inline-block w-3 h-3 bg-red-50 border border-red-200 rounded" />
-          現在株価未満
+          Below current price
         </span>
         <span className="flex items-center gap-1">
           <span className="inline-block w-3 h-3 bg-blue-200 border border-blue-300 rounded" />
-          現在の前提
+          Current assumptions
         </span>
         <span className="flex items-center gap-1">
           <span className="inline-block w-3 h-3 bg-gray-200 border border-gray-300 rounded" />
-          N/A（WACC ≤ LTG）
+          N/A (WACC ≤ LTG)
         </span>
       </div>
     </div>

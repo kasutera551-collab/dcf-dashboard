@@ -47,39 +47,37 @@ export default function InputsTab({ inputs, onChange }: InputsTabProps) {
 
   return (
     <div className="space-y-8">
-      {/* 基本情報 */}
       <section>
         <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">
-          基本情報
+          Basic Information
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <NumberInput
-            label="Base Year Sales（百万円）"
+            label="Base Year Sales ($M)"
             value={inputs.baseYearSales}
             onChange={(v) => update("baseYearSales", v)}
           />
           <NumberInput
-            label="Net Debt（百万円）"
+            label="Net Debt ($M)"
             value={inputs.netDebt}
             onChange={(v) => update("netDebt", v)}
           />
           <NumberInput
-            label="Shares Outstanding（千株）"
+            label="Shares Outstanding (M)"
             value={inputs.sharesOutstanding}
             onChange={(v) => update("sharesOutstanding", v)}
           />
           <NumberInput
-            label="Current Stock Price（円）"
+            label="Current Stock Price ($)"
             value={inputs.currentStockPrice}
             onChange={(v) => update("currentStockPrice", v)}
           />
         </div>
       </section>
 
-      {/* 成長率 */}
       <section>
         <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">
-          Revenue Growth（Year1〜Year5）
+          Revenue Growth (Year 1 - Year 5)
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {inputs.revenueGrowth.map((g, i) => (
@@ -93,14 +91,13 @@ export default function InputsTab({ inputs, onChange }: InputsTabProps) {
           ))}
         </div>
         <p className="text-xs text-gray-500 mt-2">
-          ※ 小数で入力（例：10% → 0.10）
+          Enter as decimal (e.g. 10% = 0.10)
         </p>
       </section>
 
-      {/* 収益性 */}
       <section>
         <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">
-          収益性
+          Profitability
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           <NumberInput
@@ -135,14 +132,13 @@ export default function InputsTab({ inputs, onChange }: InputsTabProps) {
           />
         </div>
         <p className="text-xs text-gray-500 mt-2">
-          ※ すべて小数で入力（例：15% → 0.15）
+          Enter as decimal (e.g. 15% = 0.15)
         </p>
       </section>
 
-      {/* 割引関連 */}
       <section>
         <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">
-          割引率
+          Discount Rates
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-md">
           <NumberInput
@@ -152,14 +148,14 @@ export default function InputsTab({ inputs, onChange }: InputsTabProps) {
             onChange={(v) => update("wacc", v)}
           />
           <NumberInput
-            label="LTG（Terminal Growth）"
+            label="LTG (Terminal Growth)"
             value={inputs.ltg}
             step="0.005"
             onChange={(v) => update("ltg", v)}
           />
         </div>
         <p className="text-xs text-gray-500 mt-2">
-          ※ 小数で入力（例：8% → 0.08）
+          Enter as decimal (e.g. 8% = 0.08)
         </p>
       </section>
     </div>

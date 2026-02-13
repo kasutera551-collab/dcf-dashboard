@@ -1,21 +1,17 @@
 export interface DcfInputs {
-  // 基本情報
-  baseYearSales: number;
-  netDebt: number;
-  sharesOutstanding: number;
-  currentStockPrice: number;
+  baseYearSales: number;       // $M
+  netDebt: number;             // $M
+  sharesOutstanding: number;   // millions of shares
+  currentStockPrice: number;   // $ per share
 
-  // 成長率 (Year1〜Year5)
   revenueGrowth: [number, number, number, number, number];
 
-  // 収益性
   ebitdaMargin: number;
   daToSales: number;
   capexToSales: number;
   nwcToSales: number;
   taxRate: number;
 
-  // 割引関連
   wacc: number;
   ltg: number;
 }
@@ -46,16 +42,16 @@ export interface DcfResult {
 }
 
 export const DEFAULT_INPUTS: DcfInputs = {
-  baseYearSales: 1000000,
-  netDebt: 200000,
-  sharesOutstanding: 100000,
-  currentStockPrice: 5000,
+  baseYearSales: 50000,        // $50B
+  netDebt: 10000,              // $10B
+  sharesOutstanding: 1000,     // 1B shares
+  currentStockPrice: 150,      // $150
   revenueGrowth: [0.05, 0.05, 0.04, 0.04, 0.03],
   ebitdaMargin: 0.15,
   daToSales: 0.03,
   capexToSales: 0.04,
   nwcToSales: 0.05,
-  taxRate: 0.30,
-  wacc: 0.08,
-  ltg: 0.02,
+  taxRate: 0.21,               // US corporate tax rate
+  wacc: 0.09,
+  ltg: 0.025,
 };
