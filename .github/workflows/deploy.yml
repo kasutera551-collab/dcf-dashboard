@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [main, claude/dcf-valuation-dashboard-8F9P9]
 
 permissions:
   contents: read
