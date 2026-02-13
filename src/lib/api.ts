@@ -45,7 +45,9 @@ interface FmpQuote {
 }
 
 interface FmpIncome {
-  calendarYear: string;
+  calendarYear?: string;
+  fiscalYear?: string;
+  date: string;
   revenue: number;
   ebitda: number;
   depreciationAndAmortization: number;
@@ -55,7 +57,9 @@ interface FmpIncome {
 }
 
 interface FmpCashFlow {
-  calendarYear: string;
+  calendarYear?: string;
+  fiscalYear?: string;
+  date: string;
   operatingCashFlow: number;
   capitalExpenditure: number;
 }
@@ -86,12 +90,15 @@ export async function fetchCompanyData(
   const bs = balanceSheets?.[0];
   const toM = (v: number | null | undefined) => (v ?? 0) / 1_000_000;
 
+  const getYear = (r: { calendarYear?: string; fiscalYear?: string; date: string }) =>
+    r.calendarYear ?? r.fiscalYear ?? r.date.slice(0, 4);
+
   const cfMap = new Map<string, FmpCashFlow>();
-  for (const cf of cashFlows) cfMap.set(cf.calendarYear, cf);
+  for (const cf of cashFlows) cfMap.set(getYear(cf), cf);
 
   const historicalYears: HistoricalYear[] = incomes
     .map((inc) => {
-      const cf = cfMap.get(inc.calendarYear);
+      const cf = cfMap.get(getYear(inc));
       const taxRate =
         inc.incomeBeforeTax > 0
           ? inc.incomeTaxExpense / inc.incomeBeforeTax
@@ -101,7 +108,7 @@ export async function fetchCompanyData(
       const interest = inc.interestExpense ?? 0;
 
       return {
-        year: inc.calendarYear,
+        year: getYear(inc),
         revenue: toM(inc.revenue),
         ebitda: toM(inc.ebitda),
         da: toM(inc.depreciationAndAmortization),
