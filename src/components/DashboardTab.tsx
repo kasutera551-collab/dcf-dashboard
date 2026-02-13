@@ -105,12 +105,19 @@ function BarChart({
   );
 }
 
-const HIST_ROWS: { label: string; key: keyof HistoricalYear }[] = [
-  { label: "Revenue", key: "revenue" },
-  { label: "EBITDA", key: "ebitda" },
-  { label: "D&A", key: "da" },
-  { label: "CapEx", key: "capex" },
-  { label: "FCFF", key: "fcff" },
+type HistRow =
+  | { label: string; key: keyof HistoricalYear; format: "number" }
+  | { label: string; key: keyof HistoricalYear; format: "percent" };
+
+const HIST_ROWS: HistRow[] = [
+  { label: "Revenue", key: "revenue", format: "number" },
+  { label: "Rev Growth (YoY)", key: "revenueYoY", format: "percent" },
+  { label: "EBITDA", key: "ebitda", format: "number" },
+  { label: "EBITDA Margin", key: "ebitdaMargin", format: "percent" },
+  { label: "D&A", key: "da", format: "number" },
+  { label: "CapEx", key: "capex", format: "number" },
+  { label: "CapEx / Rev", key: "capexToRevenue", format: "percent" },
+  { label: "FCFF", key: "fcff", format: "number" },
 ];
 
 export default function DashboardTab({
@@ -200,20 +207,33 @@ export default function DashboardTab({
                     className={`border-b border-gray-200 ${
                       row.key === "fcff"
                         ? "bg-blue-50 font-semibold"
+                        : row.format === "percent"
+                        ? "bg-gray-50/50 text-gray-600"
                         : i % 2 === 0
                         ? "bg-white"
                         : "bg-gray-50"
                     }`}
                   >
                     <td className="py-2 px-3 text-gray-700">{row.label}</td>
-                    {hist.map((y) => (
-                      <td
-                        key={y.year}
-                        className="text-right py-2 px-3 text-gray-900 font-mono"
-                      >
-                        {formatNumber(y[row.key] as number, 0)}
-                      </td>
-                    ))}
+                    {hist.map((y) => {
+                      const val = y[row.key];
+                      let display: string;
+                      if (val === null || val === undefined) {
+                        display = "—";
+                      } else if (row.format === "percent") {
+                        display = formatPercent(val as number, 1);
+                      } else {
+                        display = formatNumber(val as number, 0);
+                      }
+                      return (
+                        <td
+                          key={y.year}
+                          className="text-right py-2 px-3 text-gray-900 font-mono"
+                        >
+                          {display}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>

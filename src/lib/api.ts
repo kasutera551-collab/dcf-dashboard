@@ -2,11 +2,14 @@ const FMP_BASE = "https://financialmodelingprep.com/stable";
 
 export interface HistoricalYear {
   year: string;
-  revenue: number;  // $M
-  ebitda: number;   // $M
-  da: number;       // $M
-  capex: number;    // $M
-  fcff: number;     // $M
+  revenue: number;       // $M
+  ebitda: number;        // $M
+  da: number;            // $M
+  capex: number;         // $M
+  fcff: number;          // $M
+  revenueYoY: number | null;  // YoY growth rate (null for first year)
+  capexToRevenue: number;     // CapEx / Revenue
+  ebitdaMargin: number;       // EBITDA / Revenue
 }
 
 export interface CompanyData {
@@ -78,8 +81,8 @@ export async function fetchCompanyData(
 
   const [quotes, incomes, cashFlows, balanceSheets] = await Promise.all([
     fetchJson<FmpQuote[]>(`${FMP_BASE}/quote?symbol=${sym}&${q}`),
-    fetchJson<FmpIncome[]>(`${FMP_BASE}/income-statement?symbol=${sym}&limit=3&${q}`),
-    fetchJson<FmpCashFlow[]>(`${FMP_BASE}/cash-flow-statement?symbol=${sym}&limit=3&${q}`),
+    fetchJson<FmpIncome[]>(`${FMP_BASE}/income-statement?symbol=${sym}&limit=5&${q}`),
+    fetchJson<FmpCashFlow[]>(`${FMP_BASE}/cash-flow-statement?symbol=${sym}&limit=5&${q}`),
     fetchJson<FmpBalance[]>(`${FMP_BASE}/balance-sheet-statement?symbol=${sym}&limit=1&${q}`),
   ]);
 
@@ -97,7 +100,7 @@ export async function fetchCompanyData(
   const cfMap = new Map<string, FmpCashFlow>();
   for (const cf of cashFlows) cfMap.set(getYear(cf), cf);
 
-  const historicalYears: HistoricalYear[] = incomes
+  const sorted = incomes
     .map((inc) => {
       const cf = cfMap.get(getYear(inc));
       const taxRate =
@@ -107,17 +110,33 @@ export async function fetchCompanyData(
       const ocf = cf?.operatingCashFlow ?? 0;
       const capexRaw = cf?.capitalExpenditure ?? 0; // negative in FMP
       const interest = inc.interestExpense ?? 0;
+      const rev = toM(inc.revenue);
+      const capex = toM(Math.abs(capexRaw));
+      const ebitda = toM(inc.ebitda);
 
       return {
         year: getYear(inc),
-        revenue: toM(inc.revenue),
-        ebitda: toM(inc.ebitda),
+        revenue: rev,
+        ebitda,
         da: toM(inc.depreciationAndAmortization),
-        capex: toM(Math.abs(capexRaw)),
+        capex,
         fcff: toM(ocf + interest * (1 - taxRate) + capexRaw),
+        revenueYoY: null as number | null,
+        capexToRevenue: rev > 0 ? capex / rev : 0,
+        ebitdaMargin: rev > 0 ? ebitda / rev : 0,
       };
     })
     .sort((a, b) => a.year.localeCompare(b.year));
+
+  // Compute YoY revenue growth
+  for (let i = 1; i < sorted.length; i++) {
+    const prev = sorted[i - 1].revenue;
+    if (prev > 0) {
+      sorted[i].revenueYoY = (sorted[i].revenue - prev) / prev;
+    }
+  }
+
+  const historicalYears: HistoricalYear[] = sorted;
 
   return {
     ticker: ticker.toUpperCase().trim(),
