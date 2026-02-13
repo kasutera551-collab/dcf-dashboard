@@ -1,4 +1,4 @@
-const FMP_BASE = "https://financialmodelingprep.com/api/v3";
+const FMP_BASE = "https://financialmodelingprep.com/stable";
 
 export interface HistoricalYear {
   year: string;
@@ -72,10 +72,10 @@ export async function fetchCompanyData(
   const q = `apikey=${apiKey}`;
 
   const [quotes, incomes, cashFlows, balanceSheets] = await Promise.all([
-    fetchJson<FmpQuote[]>(`${FMP_BASE}/quote/${sym}?${q}`),
-    fetchJson<FmpIncome[]>(`${FMP_BASE}/income-statement/${sym}?limit=3&${q}`),
-    fetchJson<FmpCashFlow[]>(`${FMP_BASE}/cash-flow-statement/${sym}?limit=3&${q}`),
-    fetchJson<FmpBalance[]>(`${FMP_BASE}/balance-sheet-statement/${sym}?limit=1&${q}`),
+    fetchJson<FmpQuote[]>(`${FMP_BASE}/quote?symbol=${sym}&${q}`),
+    fetchJson<FmpIncome[]>(`${FMP_BASE}/income-statement?symbol=${sym}&limit=3&${q}`),
+    fetchJson<FmpCashFlow[]>(`${FMP_BASE}/cash-flow-statement?symbol=${sym}&limit=3&${q}`),
+    fetchJson<FmpBalance[]>(`${FMP_BASE}/balance-sheet-statement?symbol=${sym}&limit=1&${q}`),
   ]);
 
   if (!Array.isArray(quotes) || quotes.length === 0) {
