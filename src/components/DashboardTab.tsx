@@ -1,11 +1,13 @@
 "use client";
 
 import { DcfInputs, DcfResult } from "@/lib/types";
+import { CompanyData, HistoricalYear } from "@/lib/api";
 import { formatNumber, formatCurrency, formatPercent } from "@/lib/format";
 
 interface DashboardTabProps {
   inputs: DcfInputs;
   result: DcfResult;
+  companyData?: CompanyData | null;
 }
 
 function KpiCard({
@@ -103,7 +105,19 @@ function BarChart({
   );
 }
 
-export default function DashboardTab({ inputs, result }: DashboardTabProps) {
+const HIST_ROWS: { label: string; key: keyof HistoricalYear }[] = [
+  { label: "Revenue", key: "revenue" },
+  { label: "EBITDA", key: "ebitda" },
+  { label: "D&A", key: "da" },
+  { label: "CapEx", key: "capex" },
+  { label: "FCFF", key: "fcff" },
+];
+
+export default function DashboardTab({
+  inputs,
+  result,
+  companyData,
+}: DashboardTabProps) {
   const { impliedPrice, enterpriseValue, tvEvRatio, waccExceedsLtg, yearData } =
     result;
   const upside =
@@ -119,6 +133,8 @@ export default function DashboardTab({ inputs, result }: DashboardTabProps) {
 
   const fcffLabels = ["Y1", "Y2", "Y3", "Y4", "Y5"];
   const fcffValues = yearData.map((y) => y.fcff);
+
+  const hist = companyData?.historicalYears;
 
   return (
     <div className="space-y-6">
@@ -153,6 +169,58 @@ export default function DashboardTab({ inputs, result }: DashboardTabProps) {
           value={tvEvRatio !== null ? formatPercent(tvEvRatio) : "N/A"}
         />
       </div>
+
+      {/* Historical Financials */}
+      {hist && hist.length > 0 && (
+        <div className="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
+          <h4 className="text-sm font-semibold text-gray-700 mb-4">
+            Historical Financials — {companyData!.ticker}
+          </h4>
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm">
+              <thead>
+                <tr className="border-b-2 border-gray-300">
+                  <th className="text-left py-2 px-3 font-semibold text-gray-700 bg-gray-50 min-w-[100px]">
+                    $M
+                  </th>
+                  {hist.map((y) => (
+                    <th
+                      key={y.year}
+                      className="text-right py-2 px-3 font-semibold text-gray-700 bg-gray-50"
+                    >
+                      {y.year}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {HIST_ROWS.map((row, i) => (
+                  <tr
+                    key={row.key}
+                    className={`border-b border-gray-200 ${
+                      row.key === "fcff"
+                        ? "bg-blue-50 font-semibold"
+                        : i % 2 === 0
+                        ? "bg-white"
+                        : "bg-gray-50"
+                    }`}
+                  >
+                    <td className="py-2 px-3 text-gray-700">{row.label}</td>
+                    {hist.map((y) => (
+                      <td
+                        key={y.year}
+                        className="text-right py-2 px-3 text-gray-900 font-mono"
+                      >
+                        {formatNumber(y[row.key] as number, 0)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <BarChart
