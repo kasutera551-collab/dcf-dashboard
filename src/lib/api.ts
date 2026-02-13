@@ -20,6 +20,14 @@ export interface CompanyData {
 
 async function fetchJson<T>(url: string): Promise<T> {
   const res = await fetch(url);
+  if (res.status === 401 || res.status === 403) {
+    throw new Error(
+      "Invalid API key. Get a free key at https://site.financialmodelingprep.com/register",
+    );
+  }
+  if (res.status === 429) {
+    throw new Error("API rate limit reached. Free tier allows 250 calls/day.");
+  }
   if (!res.ok) throw new Error(`API error (${res.status})`);
   const data = await res.json();
   if (data && typeof data === "object" && "Error Message" in data) {

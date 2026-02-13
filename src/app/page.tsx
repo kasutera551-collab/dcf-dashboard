@@ -129,20 +129,33 @@ export default function Home() {
           </div>
 
           {showApiKey && (
-            <div className="mt-3 flex items-center gap-2">
-              <input
-                type="password"
-                value={apiKey}
-                onChange={(e) => saveApiKey(e.target.value)}
-                placeholder="FMP API key (free at financialmodelingprep.com)"
-                className="flex-1 border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <button
-                onClick={() => setShowApiKey(false)}
-                className="text-sm text-gray-500 hover:text-gray-700"
-              >
-                Done
-              </button>
+            <div className="mt-3">
+              <div className="flex items-center gap-2">
+                <input
+                  type="password"
+                  value={apiKey}
+                  onChange={(e) => saveApiKey(e.target.value)}
+                  placeholder="Paste your FMP API key here"
+                  className="flex-1 border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                  onClick={() => setShowApiKey(false)}
+                  className="text-sm text-gray-500 hover:text-gray-700"
+                >
+                  Done
+                </button>
+              </div>
+              <p className="text-xs text-gray-400 mt-1">
+                Free key:{" "}
+                <a
+                  href="https://site.financialmodelingprep.com/register"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 underline"
+                >
+                  site.financialmodelingprep.com/register
+                </a>
+              </p>
             </div>
           )}
 
