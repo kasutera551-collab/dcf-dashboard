@@ -41,7 +41,8 @@ interface FmpQuote {
   symbol: string;
   name: string;
   price: number;
-  sharesOutstanding: number;
+  sharesOutstanding?: number;
+  marketCap?: number;
 }
 
 interface FmpIncome {
@@ -122,7 +123,12 @@ export async function fetchCompanyData(
     ticker: ticker.toUpperCase().trim(),
     name: quote.name,
     currentPrice: quote.price,
-    sharesOutstanding: (quote.sharesOutstanding ?? 0) / 1_000_000,
+    sharesOutstanding:
+      quote.sharesOutstanding
+        ? quote.sharesOutstanding / 1_000_000
+        : quote.marketCap && quote.price
+          ? quote.marketCap / quote.price / 1_000_000
+          : 0,
     netDebt: bs ? toM(bs.netDebt) : 0,
     historicalYears,
   };
